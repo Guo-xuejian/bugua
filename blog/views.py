@@ -252,7 +252,8 @@ def site(request, name, **kwargs):
                 condition = kwargs.get('condition')
                 year, month = condition.split('/')
                 article_list = article_list.filter(create_time__year=year, create_time__month=month)
-            return render(request, 'site.html', locals())
+            # 下方的文件原来是小写 site linux环境下敏感，注意修正!
+            return render(request, 'Site.html', locals())
         except:
             return render(request, 'other/Error.html')
     else:
