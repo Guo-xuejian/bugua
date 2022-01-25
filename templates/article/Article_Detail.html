@@ -1,0 +1,269 @@
+{% extends 'template_base/base.html' %}
+
+
+
+{% block title %}
+    {{ article.title }}
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-2">
+            {% load sideBar %}
+            {% left name %}
+        </div>
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    当前位置：
+                    <li class="breadcrumb-item"><a href="/index/">首页</a></li>
+                    <li class="breadcrumb-item"><a
+                            href="/{{ article.blog.Blog.username }}">{{ article.blog.title }}</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+                    {% if request.user.username == article.blog.userinfo.username %}
+                        <a href="/update_article/{{ article.pk }}" class="ml-auto btn btn-outline-secondary btn-sm m-0">编辑</a>
+                    {% endif %}
+                </ol>
+            </nav>
+            <div class="row mx-1">
+                <span class="alert alert-warning col-md-4"><strong>发布于：</strong>{{ article.create_time }}</span>
+                <span class="alert alert-info col-md-4"><strong>当前时间：</strong><span
+                        id="c_time"></span></span>
+                <span class="alert alert-success col-md-4"><strong>更新于：</strong>{{ article.modify_time }}</span>
+            </div>
+            <div class="bg-white-95 radius-5 p-2">
+                <h1 class="text-center">{{ article.title }}</h1>
+                <hr>
+                <div class="mb-2 article-content">
+                    {{ content|safe }}
+                </div>
+
+                <!-- 点赞点踩 -->
+                {% if request.user.username %}
+                    <hr>
+                    <div class="row">
+                        <div id="div_digg" class="ml-auto mr-4">
+                            <div class="diggit action btn btn-success">
+                            <span class="diggnum" id="digg_count">
+                                <i class="fa fa-thumbs-o-up"></i>
+                                <span>{{ article.up_num }}</span>
+                            </span>
+                            </div>
+                            <div class="buryit action btn btn-danger">
+                            <span class="burynum" id="bury_count">
+                                <i class="fa fa-thumbs-o-down"></i>
+                                <span>{{ article.down_num }}</span>
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <hr>
+                <!-- 评论 -->
+                <div style="width: 100%" class="mt-2">
+                    <h1 class="text-center">评论区</h1>
+                    <ul class="list-group">
+                        {% for comment in comment_list %}
+                            <li class="list-group-item">
+                                <div class="p-0">
+                                    <span>#{{ forloop.counter }}楼</span>
+                                    <span>{{ comment.comment_time|date:'Y-m-d H:i:s' }}</span>
+                                    <span class="">用户：<a
+                                            href="/{{ comment.user.username }}">{{ comment.user.username }}</a>
+                                    </span>
+                                    {% if request.user.username %}
+                                        <button class="id_replay btn btn-outline-secondary btn-sm ml-auto d-block"
+                                                username="{{ comment.user.username }} " style="margin-top: -28px"
+                                                parent="{{ comment.pk }}">回复
+                                        </button>
+                                    {% endif %}
+
+                                </div>
+                                <hr class="my-2">
+                                <div>
+                                    {% if comment.comment_id_id %}
+                                        <p>@{{ comment.comment_id.userinfo.username }}</p>
+                                        <p>{{ comment.content }}</p>
+                                    {% else %}
+                                        {{ comment.content }}
+                                    {% endif %}
+
+                                </div>
+                            </li>
+                        {% empty %}
+                            <div class="alert alert-warning"><h2 class="text-center">当前暂无评论内容</h2></div>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+                {% if request.user.is_authenticated %}
+                    <div class="mt-2">
+                        <p><textarea name="" class="width-b100 radius-5 p-2" id="id_text" rows="10"
+                                     placeholder="来都来了，说两句呗！" required></textarea></p>
+                        <button class="btn btn-success btn-block mb-2" id="id_comment">发表评论</button>
+                    </div>
+                {% else %}
+                    <div class="mt-2 ml-1 alert alert-warning">
+                        登录后才能发表评论，立即 <a href="/login/" class="btn btn-outline-primary btn-sm">登录</a> 或 <a
+                            href="/register/" class="btn btn-outline-success btn-sm">注册</a>， 访问 网站首页
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-2 p-0">
+            {{ toc|safe }}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script src="/static/js/highlight.js"></script>
+    <script src="/static/js/highlight-lines.js"></script>
+    <script src="/static/js/clipboard.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+        hljs.initLineNumbersOnLoad();
+    </script>
+    <script>
+        var clipboard = new Clipboard('.copybtn');
+        clipboard.on('success', function (e) {
+            swal({
+                title: '复制成功！',
+                text: '如需转载，请注明出处',
+                type: 'success',
+                timer: 1000,
+                showConfirmButton: false,
+            })
+        });
+        clipboard.on('error', function (e) {
+            swal({
+                title: '复制失败！',
+                text: '在试一试吧！',
+                type: 'danger',
+                timer: 1000,
+                showConfirmButton: false,
+            })
+        });
+    </script>
+    <script>
+        //页面加载调用
+        window.onload = function () {
+            //每1秒刷新时间
+            setInterval("NowTime()", 1000);
+        }
+
+        function NowTime() {
+            var myDate = new Date();
+            var y = myDate.getFullYear();
+            var M = myDate.getMonth() + 1;     //获取当前月份(0-11,0代表1月)
+            var d = myDate.getDate();        //获取当前日(1-31)
+            var h = myDate.getHours();       //获取当前小时数(0-23)
+            var m = myDate.getMinutes();     //获取当前分钟数(0-59)
+            var s = myDate.getSeconds();     //获取当前秒数(0-59)
+
+            //检查是否小于10
+            M = check(M);
+            d = check(d);
+            h = check(h);
+            m = check(m);
+            s = check(s);
+            var timestr = y + "年" + M + "月" + d + "日 " + h + ":" + m + ":" + s;
+            document.getElementById("c_time").innerHTML = timestr;
+        }
+
+        //时间数字小于10，则在之前加个“0”补位。
+        function check(i) {
+            var num = (i < 10) ? ("0" + i) : i;
+            return num;
+        }
+    </script>
+    <script>
+        var parent_id = ''
+        $(".action").click(function () {
+            var is_up = $(this).hasClass('diggit')
+            var span = $(this).children('span').children('span')
+            $.ajax({
+                url: '/upanddown/',
+                method: 'post',
+                data: {
+                    article_id: '{{ article.id }}',
+                    is_up: is_up,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    swal({
+                        title: data.msg,
+                    })
+                    if (data.code === 100) {
+                        var num = Number(span.html()) + 1
+                        span.html(num)
+                    }
+                }
+            })
+        })
+
+        $('#id_comment').click(function () {
+            let content = $('#id_text').val()
+            if (parent_id) {
+                let i = content.indexOf('\n') + 1
+                content = content.slice(i)
+            }
+            $.ajax({
+                url: '/comment/',
+                method: 'post',
+                data: {
+                    article_id: '{{ article.id }}',
+                    content: content,
+                    parent: parent_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data.code === 100) {
+                        let username = data.username
+                        let res_content = data.content
+                        let parent_name = data.parent_name
+                        let ss = ``
+                        if (parent_id) {
+                            ss = `<li class="list-group-item">
+                                <div>
+                                    <span>${username}</span>
+                                </div>
+                                <div>
+                                <p>@${parent_name}</p>
+                                    ${res_content}
+                                </div>
+                            </li>`
+                        } else {
+                            ss = `<li class="list-group-item">
+                                <div>
+                                    <span>${username}</span>
+
+                                </div>
+                                <div>
+                                    ${res_content}
+                                </div>
+                            </li>`
+                        }
+                        $('#id_text').val('')
+                        $('.list-group').append(ss)
+                        parent_id = ''
+                    }
+                }
+            })
+        })
+
+        $('.id_replay').click(function () {
+            let username = $(this).attr('username')
+            parent_id = $(this).attr('parent')
+            $('#id_text').val('@' + username + '\n').focus()
+        })
+    </script>
+    <script>
+        $('body').attr('style', 'background:url(/media/{{ article.blog.userinfo.bg_img }}) !important;background-attachment: fixed !important;background-size: cover !important;')
+    </script>
+{% endblock %}

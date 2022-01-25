@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}
+
+    {% endblock %}</title>
+
+
+
+    {% block css %}
+        {% include 'template_static/css_base.html' %}
+    {% endblock %}
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card">
+                <nav class="navbar navbar-expand-lg navbar-light bg-info">
+                    <a href="{% url 'index' %}" class="mr-3 text-white">
+                        <img src="/media/logo/bugua_logo_R.png" height="50">
+                    </a>
+                    <a href="{% url 'index' %}" class="mx-2 text-white btn btn-info">
+                        <b>首页</b>问答专区
+                    </a>
+                    <a href="{% url 'leisure' %}" class="mx-2 text-white btn btn-info">
+                        休闲专区
+                    </a>
+                    <a href="{% url 'original' %}" class="mx-2 text-white btn btn-info">
+                        原创专区
+                    </a>
+                    <a href="{% url 'contact' %}" class="mx-2 text-white btn btn-info">
+                        联系我们
+                    </a>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_superuser %}
+                            <a href="{% url 'user_info' %}" class="mx-2 text-white btn btn-info">
+                                用户管理
+                            </a>
+                            <a href="{% url 'upload_swiper' %}" class="mx-2 text-white btn btn-info">
+                                轮播图上传
+                            </a>
+                            <a href="/admin/" class="mx-2 text-white btn btn-info">
+                                Admin后台管理
+                            </a>
+                            <a href="{% url 'log' %}" class="mx-2 text-white btn btn-info">
+                            访问日志
+                        </a>
+                        {% endif %}
+                        <div class="btn-group ml-auto">
+                            <img src="/media/{{ request.user.avatar }}" alt="" class="show_avatar">
+                            <span class="text-white my-1 ml-1 mr-3"><strong>{{ request.user.username }}</strong></span>
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                更多
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="/set_info/">个人中心</a>
+                                <a class="dropdown-item" href="/{{ request.user.username }}">我的空间</a>
+                                <a class="dropdown-item" href="/backend/">开始创作</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">退出</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="ml-auto">
+                            <a href="{% url 'register' %}" class="mx-2 text-white btn btn-info ">
+                                注册
+                            </a>
+                            <a href="{% url 'login' %}" class="mx-2 text-white btn btn-info ">
+                                登录
+                            </a>
+                        </div>
+                    {% endif %}
+                </nav>
+                <div class="card-body">
+                    {% block content %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('body').attr('style', 'background:url(/media/{{ request.user.bg_img }}) !important;background-attachment: fixed !important;background-size: cover !important;')
+    $('.card').attr('style', 'background:rgba(0,0,0,0)')
+    $('.card-body').addClass('bg-white-95')
+</script>
+{% block js %}
+
+{% endblock %}
+</body>
+</html>

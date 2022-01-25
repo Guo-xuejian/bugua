@@ -1,0 +1,164 @@
+{% extends 'template_base/base.html' %}
+
+
+
+{% block title %}
+    不挂—社交学习平台
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    当前位置：
+                    <li class="breadcrumb-item active" aria-current="page">首页</li>
+                </ol>
+            </nav>
+            <div class="swiper-container swiper1 radius-5 ">
+                <div class="swiper-wrapper">
+                    {% for foo in swiper_list %}
+                        <div class="swiper-slide" style="background: url('/media/{{ foo.image }}')">
+                            <br><br><br><br><br><br>
+                            <a href="{{ foo.img_url }}">
+                                <h2 class="text-center text-white my-5">{{ foo.title }}</h2>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <hr>
+            <div class="accordion bg-white-7" id="accordionExample">
+                {% for article in article_list %}
+                    <div class="card">
+                        <div class="card-header p-2" id="headingOne">
+                            <h2 class="mb-0">
+                                <div class="btn btn-link btn-block text-left text-decoration-none" type="button"
+                                     data-toggle="collapse"
+                                     data-target="#collapse{{ forloop.counter }}" aria-expanded="true"
+                                     aria-controls="collapseOne">
+                                    <h5 class="d-inline ml-3">{{ article.title }}</h5>
+                                </div>
+                            </h2>
+                        </div>
+                        <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="headingOne"
+                             data-parent="#accordionExample">
+                            <div class="card-body px-3 py-2">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <a href="/{{ article.blog.Blog.username }}">
+                                            <img src="/media/{{ article.blog.Blog.avatar }}" height="80">
+                                        </a>
+                                    </div>
+                                    <div class="col-md-11">
+                                        <div class="ml-4">
+                                            <a href="/{{ article.blog.Blog.username }}/article/{{ article.id }}.html">
+                                                {{ article.description|truncatechars:"90" }}...
+                                            </a>
+                                            <hr class="my-1">
+                                            <div class="mt-1 text-right">
+                                                Posted @<a href="/{{ article.blog.Blog.username }}"
+                                                           class="mr-2 width-160">{{ article.blog.title }}</a>
+                                                发布时间：<span class="mx-2">{{ article.create_time|date:'Y年m月d日' }}</span>
+                                                <span class="mx-2 width-80"><i
+                                                        class="fa fa-thumbs-o-up text-success"></i> {{ article.up_num }}</span>
+                                                <span class="ml-2 width-80"><i
+                                                        class="fa fa-commenting-o text-warning"></i> {{ article.comment_num }}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% empty %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <strong>提示：</strong>当前暂无已发布文章
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+                <div class="d-flex justify-content-center mt-3">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {% if page.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{% url 'index' %}?page={{ start }}">首页</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{% url 'index' %}?page={{ page.previous_page_number }}">上一页</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">首页</a>
+                                </li>
+                                <li class="page-item disabled"><a class="page-link" href="#">上一页</a>
+                                </li>
+                            {% endif %}
+
+                            {% for page_num in page_range %}
+                                {% if page_num_int == page_num %}
+                                    <li class="page-item active">
+                                        <a class="page-link"
+                                           href="{% url 'index' %}?page={{ page_num }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           href="{% url 'index' %}?page={{ page_num }}">{{ page_num }}</a>
+                                    </li>
+                                {% endif %}
+
+                            {% endfor %}
+
+                            {% if page.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{% url 'index' %}?page={{ page.next_page_number }}">下一页</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{% url 'index' %}?page={{ end }}">尾页</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><a class="page-link" href="#">下一页</a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">尾页</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script>
+        var mySwiper = new Swiper('.swiper-container', {
+            autoplay: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        })
+        new Swiper('.swiper-container')
+        var mySwiper = document.querySelector('.swiper-container').swiper
+        mySwiper.slideNext();
+    </script>
+{% endblock %}

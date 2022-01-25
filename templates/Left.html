@@ -1,0 +1,27 @@
+<div class="card">
+    <h5 class="card-header">文章分类</h5>
+    <div class="card-body">
+        {% for category in res_category %}
+            <a href="/{{ name }}/category/{{ category.2 }}.html">{{ category.0 }}（{{ category.1 }}）</a><br>
+        {% endfor %}
+    </div>
+</div>
+<br>
+<div class="card">
+    <h5 class="card-header">文章标签</h5>
+    <div class="card-body">
+        {% for tag in res_tag %}
+            <a href="/{{ name }}/tag/{{ tag.2 }}.html">{{ tag.0 }}（{{ tag.1 }}）</a><br>
+        {% endfor %}
+    </div>
+</div>
+<br>
+<div class="card">
+    <h5 class="card-header">日期归档</h5>
+    <div class="card-body">
+        {% for date in res_date %}
+            <a href="/{{ name }}/archive/{{ date.0|date:'Y/m' }}.html">{{ date.0|date:'Y年m月' }}（{{ date.1 }}篇）</a>
+            <br>
+        {% endfor %}
+    </div>
+</div>

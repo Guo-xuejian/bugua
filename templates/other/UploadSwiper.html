@@ -1,0 +1,86 @@
+{% extends 'template_base/base.html' %}
+
+
+
+{% block title %}
+    轮播图上传
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            <form action="" method="post" enctype="multipart/form-data">
+                <h2 class="text-center">上传轮播图</h2>
+                {% csrf_token %}
+                <div class="input-group mt-5">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <label for="swiper_img" class="mb-0">
+                                <i class="fa fa-picture-o width-30" aria-hidden="true"></i>
+                            </label>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="swiper_img" required
+                                   accept="image/*">
+                            <label class="custom-file-label" for="customFile"><span
+                                    style="color: rgba(0,0,0,0.5)">请选择文章头图</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mt-3">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <label for="title" class="mb-0">
+                                <i class="fa fa-font width-30"></i>
+                            </label>
+                        </div>
+                        <input type="text" name="title" class="form-control" placeholder="请输入标题">
+                    </div>
+                </div>
+                <div class="input-group mt-3">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <label for="url" class="mb-0">
+                                <i class="fa fa-blind width-30"></i>
+                            </label>
+                        </div>
+                        <input type="text" name="url" class="form-control" placeholder="请输入链接地址">
+                    </div>
+                </div>
+                <input type="submit" value="上传" class="btn btn-success btn-block mt-3">
+            </form>
+        </div>
+        <div class="col-md-8 overflow-auto" style="max-height: 500px;">
+            <table class="table table-bordered text-center">
+                <h2 class="text-center">已上传的轮播图</h2>
+                <tr class="font-weight-bold">
+                    <td>ID</td>
+                    <td>图片地址</td>
+                    <td>图片标题</td>
+                    <td>跳转的URL</td>
+                </tr>
+                {% for swiper in swiper_list %}
+                    <tr>
+                        <td>{{ swiper.id }}</td>
+                        <td>{{ swiper.image }}</td>
+                        <td>{{ swiper.title }}</td>
+                        <td>{{ swiper.img_url }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init()
+        })
+    </script>
+    <script src="/static/js/bs-custom-file-input.js"></script>
+{% endblock %}

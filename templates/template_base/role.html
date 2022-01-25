@@ -1,0 +1,75 @@
+<div class="form-group mt-3">
+    <div>
+        <input type="checkbox" name="" id="myrole" class="right"
+               onclick="if (this.checked) {my_enable()} else {my_disable()}">
+        <span></span>
+        <span id="roles" style="font-size: 16px; display: inline">
+            请阅读并同意
+            <a href="#" id="myrole-detail1" style="font-weight: bold">《文明上网公约》</a>
+            和
+            <a href="#" id="myrole-detail2" style="font-weight: bold">《本站用户条例》</a>
+            <br>
+        </span>
+        <span id="my-agree" style="font-size: 16px; display: none">
+            我已阅读并同意
+            <a href="#" id="myrole-detail3" style="font-weight: bold">《文明上网公约》</a>
+            和
+            <a href="#" id="myrole-detail4" style="font-weight: bold">《本站用户条例》</a>
+        </span>
+    </div>
+</div>
+
+
+<script>
+    function my_disable() {
+        document.getElementById("btn-reg").disabled = true;
+        document.getElementById("roles").style.display = "inline";
+        document.getElementById("my-agree").style.display = "none";
+
+    }
+
+    function my_enable() {
+        document.getElementById("btn-reg").disabled = false;
+        document.getElementById("roles").style.display = "none";
+        document.getElementById("my-agree").style.display = "inline";
+    }
+
+
+    $("#myrole-detail1, #myrole-detail3").click(function () {
+        swal({
+            title: "文明上网自律公约",
+            text: "1. 自觉遵纪守法，倡导社会公德" +
+                "\n" +
+                "2. 提倡先进文化，摒弃消极颓废" +
+                "\n" +
+                "3. 提倡自主创新，摒弃盗版剽窃" +
+                "\n" +
+                "4. 提倡互相尊重，摒弃造谣诽谤" +
+                "\n" +
+                "5. 提倡诚实守信，摒弃弄虚作假" +
+                "\n" +
+                "6. 提倡社会关爱，摒弃低俗沉迷" +
+                "\n" +
+                "7. 提倡公平竞争，摒弃尔虞我诈" +
+                "\n" +
+                "8. 提倡人人受益，消除数字鸿沟",
+        });
+    });
+
+    $("#myrole-detail2, #myrole-detail4").click(function () {
+        swal({
+            title: "用户条例",
+            text: "1. 注册后即可成为不挂正式用户" +
+                "\n" +
+                "2. 拒绝网络暴力，科学文明上网" +
+                "\n" +
+                "3. 不挂以学习为主，请您自觉遵守社区规章，维护社区氛围" +
+                "\n" +
+                "4. 不挂也是一个社交平台，帮助你找到更多志同道合的朋友" +
+                "\n" +
+                "5. 不挂承诺对用户数据绝对保密，绝不逾越隐私和道德底线" +
+                "\n" +
+                "6. 本站所有解释权归不挂官方所有",
+        });
+    });
+</script>

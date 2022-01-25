@@ -1,0 +1,92 @@
+{% extends 'template_base/base.html' %}
+
+
+
+{% block title %}
+    访问日志
+{% endblock %}
+
+
+{% block content %}
+    <div class="alert alert-success">当前日志：{{ log_num }}条</div>
+    <table class="table table-hover text-center table-bordered bg-white-95">
+        <thead>
+        <tr style="font-weight: bold">
+            <td>ID</td>
+            <td>IP地址</td>
+            <td>访问地址</td>
+            <td>访问时刻</td>
+            <td>访问设备</td>
+            <td>访问平台</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in page.object_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ log.ip }}</td>
+                <td>{{ log.url }}</td>
+                <td>{{ log.time }}</td>
+                <td>{{ log.device }}</td>
+                <td>{{ log.platform }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" class="bg-white">
+                    <div class="alert alert-danger no-info">日志
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if page.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'log' %}?page={{ start }}">首页</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'log' %}?page={{ page.previous_page_number }}">上一页</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">首页</a>
+                    </li>
+                    <li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>
+                {% endif %}
+
+                {% for page_num in page_range %}
+                    {% if page_num_int == page_num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="{% url 'log' %}?page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{% url 'log' %}?page={{ page_num }}">{{ page_num }}</a>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'log' %}?page={{ page.next_page_number }}">下一页</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'log' %}?page={{ end }}">尾页</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">下一页</a></li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">尾页</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+
+

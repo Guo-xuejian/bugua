@@ -1,0 +1,337 @@
+{% extends 'template_base/base.html' %}
+
+
+
+{% block title %}
+    个人中心
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="row m-5">
+        <div class="col-3 card pt-2">
+            <a href="/{{ request.user.username }}"
+               class="btn btn-outline-info btn-lg btn-block my-2">{{ request.user.blog.title }}的个人空间</a>
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">信息设置</a>
+                <a class="nav-link" id="v-pills-site-tab" data-toggle="pill" href="#v-pills-site" role="tab"
+                   aria-controls="v-pills-site" aria-selected="false">个人空间设置</a>
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+                   aria-controls="v-pills-profile" aria-selected="false">修改密码</a>
+                <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab"
+                   aria-controls="v-pills-messages" aria-selected="false">修改头像</a>
+                <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab"
+                   aria-controls="v-pills-settings" aria-selected="false">修改背景</a>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade px-5 show active" id="v-pills-home" role="tabpanel"
+                     aria-labelledby="v-pills-home-tab">
+                    <h1 class="text-center">个人信息设置</h1>
+                    <form action="/set_info/" class="m-5 px-5" method="post">
+                        {% csrf_token %}
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                账号
+                            </div>
+                            <input type="text" value="{{ request.user.username }}" class="form-control" disabled>
+                        </div>
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                手机
+                            </div>
+                            <input type="text" value="{{ request.user.phone }}" class="form-control" name="phone">
+                        </div>
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                邮箱
+                            </div>
+                            <input type="text" value="{{ request.user.email }}" class="form-control" name="email">
+                        </div>
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                性别
+                            </div>
+                            <select class="custom-select custom-select" name="gender">
+                                <option value="{{ request.user.gender }}"
+                                        selected>{{ request.user.get_gender_display }}</option>
+                                <option value="1">男</option>
+                                <option value="2">女</option>
+                                <option value="0">保密</option>
+                            </select>
+                        </div>
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                地址
+                            </div>
+                            <select class="province x-province" name="province" id="param_province"
+                                    onchange="provincechange()">
+                                <option>{{ request.user.province }}</option>
+                            </select>
+                            <select class="city x-city" name="city" id="param_city">
+                                <option>{{ request.user.city }}</option>
+                            </select>
+                        </div>
+                        <input type="submit" class="btn btn-success btn-block mt-2" value="确认修改">
+
+
+                    </form>
+                </div>
+                <div class="tab-pane fade px-5" id="v-pills-site" role="tabpanel"
+                     aria-labelledby="v-pills-messages-tab">
+                    {% if request.user.blog.title %}
+                        <h1 class="text-center">修改信息</h1>
+                        <div class="m-5">
+                            <div class="input-group-prepend mt-2 mx-5">
+                                <div class="input-group-text">
+                                   昵称
+                                </div>
+                                <input type="text" class="form-control my-title" value="{{ request.user.blog.title }}">
+                            </div>
+                            <div class="input-group-prepend mt-2 mx-5">
+                                <div class="input-group-text">
+                                    公告
+                                </div>
+                                <input type="text" class="form-control my-subtitle"
+                                       value="{{ request.user.blog.subtitle }}">
+                            </div>
+                            <div class="mt-2 mx-5">
+                                <button class="btn btn-success btn-block set-site">修改</button>
+                            </div>
+                        </div>
+                    {% else %}
+                        <h5 class="alert alert-warning text-center">你还没有个人空间,赶快设置一个吧!</h5>
+                        <h1 class="text-center">创建个人空间</h1>
+                        <div class="m-5">
+                            <div class="input-group-prepend mt-2 mx-5">
+                                <div class="input-group-text">
+                                    昵称
+                                </div>
+                                <input type="text" class="form-control my-title" placeholder="请输入您的昵称">
+                            </div>
+                            <div class="input-group-prepend mt-2 mx-5">
+                                <div class="input-group-text">
+                                    空间公告
+                                </div>
+                                <input type="text" class="form-control my-subtitle" placeholder="请编写您的博客公告">
+                            </div>
+                            <div class="mt-2 mx-5">
+                                <button class="btn btn-success btn-block set-site">创建</button>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade px-5" id="v-pills-profile" role="tabpanel"
+                     aria-labelledby="v-pills-profile-tab">
+                    <h1 class="text-center">修改密码</h1>
+                    <div class="m-5 px-5">
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                旧密码
+                            </div>
+                            <input type="password" class="form-control" id="old_pwd" required>
+                        </div>
+                        <div class="input-group-prepend mt-2">
+                            <div class="input-group-text">
+                                新密码
+                            </div>
+                            <input type="password" class="form-control" id="new_pwd" required>
+                        </div>
+                        <button class="btn btn-success btn-block mt-2" id="change_pwd">确认修改</button>
+                    </div>
+                </div>
+                <div class="tab-pane fade px-5" id="v-pills-messages" role="tabpanel"
+                     aria-labelledby="v-pills-messages-tab">
+                    <div class="alert alert-primary" role="alert">
+                        <strong>推荐：</strong>图片比例：1:1
+                    </div>
+                    <h1 class="text-center">修改头像</h1>
+                    <div class="row m-5 text-center">
+                        <div class="col-md-4 offset-md-4">
+                            <label for="change_avatar">
+                                <img src="/media/{{ request.user.avatar }}" alt="头像" height="150" id="my_avatar"
+                                     class="pointer">
+                            </label>
+                            <input type="file" id="change_avatar" name="change_avatar" class="d-none" accept="image/*">
+                            <button class="btn btn-success btn-block mt-3" id="btn-change-avatar">修改</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                    <div class="alert alert-primary" role="alert">
+                        <strong>注意：</strong>图片名称中不能出现特殊字符：( ) < > \ /
+                        <br>
+                        <strong>推荐：</strong>图片比例：16:9， 图片尺寸：1920*1080
+                    </div>
+                    <h1 class="text-center">修改背景</h1>
+                    <div class="row m-5 text-center">
+                        <div class="col-md-6 offset-md-3">
+                            <label for="change_bg">
+                                <img src="/media/{{ request.user.bg_img }}" alt="背景" width="380" id="my_bg"
+                                     class="pointer">
+                            </label>
+                            <input type="file" id="change_bg" name="change_bg" class="d-none" accept="image/*">
+                            <button class="btn btn-success btn-block mt-3" id="btn-change-bg">修改</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {% include 'template_static/js_address_edit.html' %}
+    <script>
+        $('.card-body').attr('style', 'height:800px')
+        $('body').attr('style', 'background:url(/media/{{ request.user.bg_img }});')
+        $('.set-site').click(function () {
+            let title = $('.my-title').val()
+            let subtitle = $('.my-subtitle').val()
+            if (title === '' || subtitle === '') {
+                swal({
+                    title: '请将信息填写完整！'
+                })
+            } else {
+                $.ajax({
+                    url: '/create_site/',
+                    method: 'post',
+                    data: {
+                        'title': title,
+                        'subtitle': subtitle,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                        if (data.code === 100) {
+                            swal({
+                                    title: data.msg,
+                                    text: '是否进入个人博客？',
+                                    showCancelButton: true,
+                                    confirmButtonClass: 'btn btn-outline-primary',
+                                    confirmButtonText: '直接进入',
+                                    cancelButtonClass: 'btn btn-outline-danger',
+                                    cancelButtonText: '我再想想',
+                                    closeOnConfirm: false,
+                                    closeOnCancel: false
+
+                                },
+                                function (isConfirm) {
+                                    if (isConfirm) {
+                                        location.href = '/{{ request.user.username }}'
+                                    } else {
+                                        location.reload()
+                                    }
+                                }
+                            )
+                        } else {
+                            swal({
+                                title: data.msg
+                            })
+                        }
+                    }
+                })
+            }
+        })
+
+        $('#change_pwd').click(function () {
+            $.ajax({
+                url: '/change_password/',
+                method: 'post',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'old_pwd': $('#old_pwd').val(),
+                    'new_pwd': $('#new_pwd').val()
+                },
+                success: function (data) {
+                    $('#old_pwd').val('')
+                    $('#new_pwd').val('')
+                    if (data.code === 100) {
+                        swal({
+                            title: data.msg,
+                            text: '正在为您跳转至登录界面',
+                            showConfirmButton: false
+                        })
+                        setTimeout(function () {
+                            location.href = '/login/'
+                        }, 2000)
+
+                    } else {
+                        swal({
+                            title: data.msg
+                        })
+                    }
+                }
+            })
+        })
+
+
+        $('#change_avatar').change(function () {
+            const fileReader = new FileReader()
+            fileReader.readAsDataURL($('#change_avatar')[0].files[0])
+            fileReader.onload = function () {
+                $('#my_avatar').attr('src', fileReader.result)
+            }
+        })
+
+        $('#btn-change-avatar').click(function () {
+            const formData = new FormData()
+            formData.append('avatar', $('#change_avatar')[0].files[0])
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+            $.ajax({
+                url: '/change_avatar/',
+                method: 'post',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (data) {
+                    if (data.code === 100) {
+                        swal({
+                            title: data.msg,
+                            text: '正在为您刷新页面',
+                            showConfirmButton: false
+                        })
+                        setTimeout(function () {
+                            location.href = '/set_info/'
+                        }, 2000)
+                    }
+                },
+            })
+        })
+
+        $('#change_bg').change(function () {
+            const fileReader = new FileReader()
+            fileReader.readAsDataURL($('#change_bg')[0].files[0])
+            fileReader.onload = function () {
+                $('#my_bg').attr('src', fileReader.result)
+            }
+        })
+
+        $('#btn-change-bg').click(function () {
+            const formData = new FormData()
+            formData.append('bg_img', $('#change_bg')[0].files[0])
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+            $.ajax({
+                url: '/change_bg/',
+                method: 'post',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (data) {
+                    if (data.code === 100) {
+                        swal({
+                            title: data.msg,
+                            text: '正在为您刷新页面',
+                            showConfirmButton: false
+                        })
+                        setTimeout(function () {
+                            location.href = '/set_info/'
+                        }, 2000)
+                    }
+                },
+            })
+        })
+    </script>
+{% endblock %}
