@@ -10,8 +10,8 @@ SIMPLEUI_LOGIN_PARTICLES = True
 # 关闭Loading遮罩层
 SIMPLEUI_LOADING = False
 # 右上角的主页标志点击后进入学生端主页面
-# SIMPLEUI_INDEX = 'http://182.92.99.206/index/'
-# SIMPLEUI_INDEX = 'http://49.232.210.219:8000/index'
+# SIMPLEUI_INDEX = 'url'
+# SIMPLEUI_INDEX = 'url'
 
 # 默认图标
 SIMPLEUI_DEFAULT_ICON = False

@@ -56,11 +56,11 @@ WSGI_APPLICATION = 'bugua.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "bugua",  # 数据库名
+        'NAME': "bugua",      # 数据库名
         "HOST": "127.0.0.1",  # 主机IP（本地为127.0.0.1）
-        "PORT": "3306",  # 端口号：默认3306
-        "USER": "root",  # 数据库用户名
-        "PASSWORD": "root",  # 数据库密码
+        "PORT": "3306",       # 端口号：默认3306
+        "USER": "root",       # 数据库用户名
+        "PASSWORD": "root",   # 数据库密码
     }
 }
 
@@ -79,7 +79,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'zh-hans'  # 设置语言为中文
+LANGUAGE_CODE = 'zh-hans'    # 设置语言为中文
 
 TIME_ZONE = 'Asia/Shanghai'  # 设置时区为亚洲上海
 
